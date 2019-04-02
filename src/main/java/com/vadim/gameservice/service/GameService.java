@@ -37,7 +37,7 @@ public class GameService {
     }
 
 
-    @Transactional(isolation = Isolation.READ_COMMITTED ,propagation = Propagation.SUPPORTS)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Balance placeBet(BetRequest betRequest) {
         PlayerEntity playerEntity = new PlayerEntity();
         playerEntity.setId(betRequest.getPlayerId());
@@ -45,10 +45,13 @@ public class GameService {
         log.info("Player {}", playerEntity);
         Balance balance = withdrawMoney(playerEntity);
         Optional<GameEntity> gameEntity = gameRepository.findById(betRequest.getGameId());
-        if(gameEntity.isPresent()) {
-            betRepository.depositMoneyByPlayerId(betRequest.getPlayerId(),betRequest.getGameId(),betRequest.getBetAmount());
+        if (gameEntity.isPresent()) {
+            betRepository.depositMoneyByPlayerId(betRequest.getPlayerId(), betRequest.getGameId(), betRequest.getBetAmount());
             return balance;
-        }else throw new GameNotFoundException();
+        } else {
+            log.error("Game not found on request {}", betRequest.toString());
+            throw new GameNotFoundException();
+        }
 
     }
 
@@ -56,12 +59,15 @@ public class GameService {
         Optional<PlayerEntity> playerEntity = playerRepository.findById(player.getId());
         if (playerEntity.isPresent()) {
             long amountAfterWithdraw = playerEntity.get().getAmount() - player.getAmount();
-            if(amountAfterWithdraw > 0) {
+            if (amountAfterWithdraw > 0) {
                 playerRepository.depositMoneyByPlayerId(player.getId(), playerEntity.get().getAmount() - player.getAmount());
                 return new Balance(amountAfterWithdraw);
+            } else {
+                log.error("Not enough money for player {}", player.toString());
+                throw new NotEnoughMoneyOnBalanceException();
             }
-            else throw new NotEnoughMoneyOnBalanceException();
         } else {
+            log.error("Player {} not found {}", player.toString());
             throw new PlayerNotFoundException();
         }
     }
@@ -71,6 +77,7 @@ public class GameService {
         if (playerEntity.isPresent()) {
             return (List<BetEntity>) playerEntity.get().getBetsById();
         } else {
+            log.error("Player  with id {} not found {}", id);
             throw new PlayerNotFoundException();
         }
     }
