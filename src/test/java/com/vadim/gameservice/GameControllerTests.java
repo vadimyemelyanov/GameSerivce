@@ -3,7 +3,6 @@ package com.vadim.gameservice;
 
 import com.vadim.gameservice.controller.GameController;
 import com.vadim.gameservice.dao.BetEntity;
-import com.vadim.gameservice.dao.PlayerEntity;
 import com.vadim.gameservice.dto.Balance;
 import com.vadim.gameservice.dto.BasicResponse;
 import com.vadim.gameservice.dto.BetRequest;
@@ -15,7 +14,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,10 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)

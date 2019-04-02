@@ -14,7 +14,6 @@ import com.vadim.gameservice.repository.PlayerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,7 @@ public class GameService {
     }
 
 
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public Balance placeBet(BetRequest betRequest) {
         PlayerEntity playerEntity = new PlayerEntity();
         playerEntity.setId(betRequest.getPlayerId());
